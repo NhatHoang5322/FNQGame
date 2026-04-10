@@ -1,0 +1,32 @@
+{
+  "name": "fnq-studio-website",
+  "version": "1.0.0",
+  "description": "Modern indie game studio website with user authentication, game shop, and payment system",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server",
+    "dev": "python -m http.server 8000"
+  },
+  "keywords": [
+    "indie-games",
+    "game-studio",
+    "website",
+    "game-shop",
+    "user-authentication",
+    "payment-system",
+    "i18n",
+    "responsive-design"
+  ],
+  "author": "FNQ Studio",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/fnq-studio.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/fnq-studio/issues"
+  },
+  "homepage": "https://github.com/yourusername/fnq-studio#readme",
+  "dependencies": {},
+  "devDependencies": {}
+}

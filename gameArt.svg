@@ -1,0 +1,124 @@
+<svg viewBox="0 0 900 580" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Harvestay game artwork">
+  <defs>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0b1225" />
+      <stop offset="55%" stop-color="#141a35" />
+      <stop offset="100%" stop-color="#0b1022" />
+    </linearGradient>
+
+    <linearGradient id="horizonGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#211a44" />
+      <stop offset="100%" stop-color="#0b1225" />
+    </linearGradient>
+
+    <linearGradient id="groundGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3a5d3f" />
+      <stop offset="100%" stop-color="#1e3526" />
+    </linearGradient>
+
+    <linearGradient id="panelGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0.1" />
+    </linearGradient>
+
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="0" stdDeviation="20" flood-color="#22d3ee" flood-opacity="0.15" />
+      <feDropShadow dx="0" dy="0" stdDeviation="35" flood-color="#7c3aed" flood-opacity="0.1" />
+    </filter>
+  </defs>
+
+  <rect width="900" height="580" fill="url(#skyGrad)" />
+  <rect y="420" width="900" height="160" fill="url(#groundGrad)" />
+  <rect y="400" width="900" height="50" fill="url(#horizonGrad)" />
+
+  <g opacity="0.75">
+    <circle cx="230" cy="80" r="3.6" fill="#7c3aed" />
+    <circle cx="310" cy="110" r="2.8" fill="#22d3ee" />
+    <circle cx="480" cy="65" r="3.2" fill="#7c3aed" />
+    <circle cx="650" cy="95" r="2.4" fill="#22d3ee" />
+    <circle cx="780" cy="75" r="3" fill="#7c3aed" />
+  </g>
+
+  <path d="M 0 420 C 150 380, 320 390, 450 420 C 560 440, 690 425, 900 420 L 900 580 L 0 580 Z" fill="#1f3622" />
+  <path d="M 0 440 C 170 420, 320 430, 470 445 C 590 455, 710 440, 900 430 L 900 580 L 0 580 Z" fill="#2b4a30" />
+
+  <g transform="translate(520 240)">
+    <rect x="0" y="0" width="280" height="190" rx="24" ry="24" fill="#1f2937" opacity="0.85" />
+    <rect x="10" y="12" width="260" height="166" rx="18" ry="18" fill="#111827" />
+    <rect x="24" y="28" width="232" height="34" rx="12" ry="12" fill="rgba(34,211,238,0.14)" />
+    <rect x="24" y="76" width="232" height="18" rx="8" ry="8" fill="#202a39" />
+    <rect x="24" y="104" width="232" height="18" rx="8" ry="8" fill="#202a39" />
+    <rect x="24" y="132" width="232" height="18" rx="8" ry="8" fill="#202a39" />
+    <circle cx="252" cy="40" r="8" fill="#22d3ee" opacity="0.9" />
+    <circle cx="276" cy="40" r="8" fill="#7c3aed" opacity="0.85" />
+    <circle cx="300" cy="40" r="8" fill="#ffffff" opacity="0.8" />
+    <path d="M 32 54 H 126" stroke="#93c5fd" stroke-width="4" stroke-linecap="round" opacity="0.9" />
+    <path d="M 32 82 H 200" stroke="#c7d2ff" stroke-width="4" stroke-linecap="round" opacity="0.9" />
+    <path d="M 32 110 H 208" stroke="#a8c4ff" stroke-width="4" stroke-linecap="round" opacity="0.9" />
+    <path d="M 32 138 H 160" stroke="#dbeafe" stroke-width="4" stroke-linecap="round" opacity="0.9" />
+  </g>
+
+  <g filter="url(#softGlow)" opacity="0.65">
+    <ellipse cx="330" cy="420" rx="190" ry="48" fill="url(#panelGlow)" />
+  </g>
+
+  <g transform="translate(120 240)">
+    <rect x="0" y="0" width="220" height="190" rx="28" ry="28" fill="#2e3448" stroke="#2f3d5b" stroke-width="4" />
+    <rect x="18" y="16" width="184" height="156" rx="20" ry="20" fill="#101827" />
+    <path d="M 18 70 H 202" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" opacity="0.5" />
+    <path d="M 18 102 H 202" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" opacity="0.4" />
+    <path d="M 18 134 H 202" stroke="#818cf8" stroke-width="3" stroke-linecap="round" opacity="0.3" />
+  </g>
+
+  <g transform="translate(260 280)">
+    <rect x="0" y="0" width="96" height="76" rx="18" ry="18" fill="#4f7a64" />
+    <rect x="10" y="10" width="76" height="26" rx="10" ry="10" fill="#6fa97a" />
+    <rect x="10" y="44" width="76" height="20" rx="10" ry="10" fill="#3b5c49" />
+    <path d="M 48 24 V 56" stroke="#bfd8b6" stroke-width="4" stroke-linecap="round" />
+  </g>
+
+  <g transform="translate(420 330)">
+    <rect x="0" y="0" width="54" height="56" rx="14" ry="14" fill="#6f3d22" />
+    <rect x="8" y="10" width="38" height="30" rx="8" ry="8" fill="#fbbf24" />
+    <path d="M 18 38 H 36" stroke="#92400e" stroke-width="4" stroke-linecap="round" />
+  </g>
+
+  <g transform="translate(180 360)">
+    <path d="M 0 0 C 12 -18, 38 -26, 56 -18 C 76 -10, 80 10, 68 26 C 56 42, 32 54, 12 44 C -4 36, -2 12, 0 0 Z" fill="#fedb41" />
+    <circle cx="34" cy="18" r="4" fill="#ffffff" opacity="0.6" />
+  </g>
+
+  <g transform="translate(120 210)">
+    <path d="M 0 0 L 80 0 L 92 80 L 12 80 Z" fill="#0f172a" stroke="#1e293b" stroke-width="3" />
+    <path d="M 20 20 H 60 V 42 H 20 Z" fill="#4f46e5" opacity="0.9" />
+    <path d="M 24 48 H 56" stroke="#93c5fd" stroke-width="4" stroke-linecap="round" />
+  </g>
+
+  <g transform="translate(390 160)">
+    <rect x="0" y="0" width="220" height="240" rx="28" ry="28" fill="#0f172a" stroke="#334155" stroke-width="4" />
+    <path d="M 20 32 H 200" stroke="#7c3aed" stroke-width="5" stroke-linecap="round" opacity="0.8" />
+    <rect x="20" y="68" width="180" height="24" rx="12" ry="12" fill="#1e293b" />
+    <rect x="20" y="108" width="180" height="24" rx="12" ry="12" fill="#1e293b" />
+    <rect x="20" y="148" width="180" height="24" rx="12" ry="12" fill="#1e293b" />
+  </g>
+
+  <g transform="translate(100 145)">
+    <path d="M 0 0 C 46 -20, 66 30, 30 60 C 0 84, -18 58, 0 0 Z" fill="#f8b26a" stroke="#c68642" stroke-width="3" />
+    <rect x="-18" y="58" width="56" height="76" rx="24" ry="24" fill="#334155" />
+    <rect x="0" y="80" width="24" height="16" rx="8" ry="8" fill="#0f172a" />
+    <path d="M 0 22 C 12 10, 18 10, 24 22" stroke="#111827" stroke-width="4" fill="none" stroke-linecap="round" />
+    <circle cx="8" cy="32" r="4" fill="#111827" />
+    <circle cx="16" cy="32" r="4" fill="#111827" />
+    <path d="M 5 42 C 12 52, 20 52, 25 42" stroke="#111827" stroke-width="3" fill="none" stroke-linecap="round" />
+  </g>
+
+  <g transform="translate(680 230)">
+    <rect x="0" y="0" width="170" height="140" rx="20" ry="20" fill="#202a37" stroke="#2d3d52" stroke-width="4" />
+    <path d="M 0 0 L 170 0 L 150 44 L 20 44 Z" fill="#3b82f6" />
+    <rect x="20" y="60" width="130" height="18" rx="9" ry="9" fill="#98a8f8" />
+    <rect x="20" y="92" width="130" height="18" rx="9" ry="9" fill="#7c3aed" opacity="0.8" />
+  </g>
+
+  <text x="450" y="66" text-anchor="middle" font-family="Space Mono, monospace" font-size="42" fill="#ffffff" letter-spacing="0.08em">HARVESTAY</text>
+  <text x="450" y="102" text-anchor="middle" font-family="Space Mono, monospace" font-size="18" fill="#9ca3ff" opacity="0.85">Survive through farming, build your camp, and master the wild.</text>
+</svg>

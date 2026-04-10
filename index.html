@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FNQ Studio - A small indie game studio with a huge pixel heart. Discover NEON QUEST and HARVESTAY games.">
+    <meta name="keywords" content="indie games, FNQ Studio, game shop, retro gaming">
+    <meta name="author" content="FNQ Studio">
+    <title>FNQ - Indie Game Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode.js/1.5.3/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="page-wrap">
+        <header>
+            <div class="logo">FNQ</div>
+            <nav>
+                <a href="#" onclick="showHomePage(event)" data-i18n="nav-home">Home</a>
+                <a href="#features" data-i18n="nav-features">Features</a>
+                <a href="#lore" data-i18n="nav-lore">Lore</a>
+            </nav>
+            <div class="header-tools">
+                <div class="language-toggle" aria-label="Language selector">
+                    <button type="button" id="lang-vn">Tiếng Việt</button>
+                    <button type="button" id="lang-en">English</button>
+                </div>
+                <div class="account-area" id="auth-area">
+                    <button class="btn btn-secondary" type="button" id="btn-login" data-i18n="btn-login">Login</button>
+                    <button class="btn btn-primary" type="button" id="btn-register" data-i18n="btn-register">Register</button>
+                </div>
+                <div class="account-panel hidden" id="account-panel">
+                    <button class="account-toggle" type="button" id="account-toggle">
+                        <span id="account-username">Player</span>
+                        <span class="chevron">▾</span>
+                    </button>
+                    <div class="account-dropdown hidden" id="account-dropdown">
+                        <h4 data-i18n="account-panel-title">Player Account</h4>
+                        <p><strong data-i18n="account-panel-user">Username:</strong> <span id="account-name">—</span></p>
+                        <p><strong data-i18n="account-panel-balance">Balance:</strong> <span id="account-balance">0</span> VNĐ</p>
+                        <div class="account-actions-dropdown">
+                            <button class="btn btn-primary" type="button" id="btn-topup" data-i18n="btn-topup">Top up 100k</button>
+                            <button class="btn btn-secondary" type="button" id="btn-buygame" data-i18n="btn-buy-game">Buy game 50k</button>
+                        </div>
+                        <div class="account-history">
+                            <p class="history-title" data-i18n="history-title">History</p>
+                            <ul class="history-list" id="history-list">
+                                <li data-i18n="history-empty">No transactions yet.</li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-secondary logout-button" type="button" id="btn-logout" data-i18n="btn-logout">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- GAME SHOP SECTION -->
+        <section id="game-shop" class="game-shop hidden">
+            <div class="shop-header">
+                <button class="back-button" type="button" id="back-home" data-i18n="btn-back">← Back to Home</button>
+                <h1 data-i18n="shop-title">NEON QUEST</h1>
+                <p data-i18n="shop-subtitle">Choose your experience and begin the adventure</p>
+            </div>
+
+            <div class="game-versions">
+                <div class="version-card demo">
+                    <h2 data-i18n="demo-title">Demo Version</h2>
+                    <p class="version-badge" data-i18n="demo-badge">FREE</p>
+                    <p class="version-desc" data-i18n="demo-desc">Experience the first 2 levels of the game completely free.</p>
+                    <ul class="version-features">
+                        <li data-i18n="demo-feature-1">✓ 2 playable levels</li>
+                        <li data-i18n="demo-feature-2">✓ Full soundtrack</li>
+                        <li data-i18n="demo-feature-3">✓ Story intro</li>
+                    </ul>
+                    <button class="btn btn-primary download-btn" type="button" id="dl-demo" onclick="downloadDemo()" data-i18n="btn-download">Download Demo</button>
+                </div>
+
+                <div class="version-card full">
+                    <h2 data-i18n="full-title">Full Version</h2>
+                    <p class="version-badge premium" data-i18n="full-badge">50K VNĐ</p>
+                    <p class="version-desc" data-i18n="full-desc">Unlock the complete game with all levels, features, and exclusive content.</p>
+                    <ul class="version-features">
+                        <li data-i18n="full-feature-1">✓ All 10 levels</li>
+                        <li data-i18n="full-feature-2">✓ Unlocked characters</li>
+                        <li data-i18n="full-feature-3">✓ Exclusive soundtrack</li>
+                        <li data-i18n="full-feature-4">✓ 30% discount on next release</li>
+                    </ul>
+                    <button class="btn btn-primary download-btn" type="button" id="dl-full" onclick="downloadFull()" data-i18n="btn-buy-download">Buy & Download</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- RECHARGE/TOP-UP SECTION -->
+        <section id="recharge-page" class="recharge-page hidden">
+            <div class="recharge-header">
+                <button class="back-button" type="button" id="back-home-recharge" data-i18n="btn-back">← Back to Home</button>
+                <h1 data-i18n="recharge-title">NẠP TIỀN</h1>
+                <p data-i18n="recharge-subtitle">Chọn phương thức thanh toán để nạp tiền vào tài khoản của bạn</p>
+            </div>
+
+            <div class="recharge-methods">
+                <div class="payment-method">
+                    <div class="method-icon">💳</div>
+                    <h3 data-i18n="payment-credit">Thẻ Tín dụng</h3>
+                    <p data-i18n="payment-credit-desc">Visa, Mastercard</p>
+                    <button class="btn btn-primary" type="button" onclick="selectPaymentMethod('credit')" data-i18n="btn-select">Chọn</button>
+                </div>
+
+                <div class="payment-method">
+                    <div class="method-icon">📱</div>
+                    <h3 data-i18n="payment-momo">Momo</h3>
+                    <p data-i18n="payment-momo-desc">Ví điện tử Momo</p>
+                    <button class="btn btn-primary" type="button" onclick="selectPaymentMethod('momo')" data-i18n="btn-select">Chọn</button>
+                </div>
+
+                <div class="payment-method">
+                    <div class="method-icon">💬</div>
+                    <h3 data-i18n="payment-zalo">ZaloPay</h3>
+                    <p data-i18n="payment-zalo-desc">Ví điện tử ZaloPay</p>
+                    <button class="btn btn-primary" type="button" onclick="selectPaymentMethod('zalo')" data-i18n="btn-select">Chọn</button>
+                </div>
+
+                <div class="payment-method">
+                    <div class="method-icon">🏦</div>
+                    <h3 data-i18n="payment-bank">Chuyển khoản</h3>
+                    <p data-i18n="payment-bank-desc">Ngân hàng trực tuyến</p>
+                    <button class="btn btn-primary" type="button" onclick="selectPaymentMethod('bank')" data-i18n="btn-select">Chọn</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- QR CODE PAYMENT SECTION -->
+        <section id="payment-qr-page" class="payment-qr-page hidden">
+            <div class="qr-header">
+                <button class="back-button" type="button" id="back-payment-methods" data-i18n="btn-back">← Back</button>
+                <h1 data-i18n="qr-payment-title">Thanh toán qua QR</h1>
+                <p class="qr-method-name" id="qr-method-name"></p>
+            </div>
+
+            <div class="qr-container">
+                <div class="qr-display">
+                    <div id="qr-code-container"></div>
+                    <p class="qr-instruction" data-i18n="qr-instruction">Quét mã QR bằng điện thoại của bạn để thanh toán</p>
+                </div>
+
+                <div class="qr-amount">
+                    <p class="amount-label" data-i18n="qr-amount-label">Số tiền nạp:</p>
+                    <p class="amount-value">100,000 VNĐ</p>
+                </div>
+
+                <button class="btn btn-primary btn-wide" type="button" id="confirm-payment" onclick="confirmPayment()" data-i18n="qr-confirm-btn">Xác nhận thanh toán</button>
+                <button class="btn btn-secondary btn-wide" type="button" id="cancel-payment" onclick="goBackPaymentMethods()" data-i18n="qr-cancel-btn">Hủy</button>
+            </div>
+        </section>
+
+        <!-- MAIN HOME CONTENT -->
+        <section class="main-content" id="main-content">
+            <!-- HERO SECTION -->
+            <section class="hero" id="home">
+                <div class="hero-content">
+                    <p class="eyebrow" data-i18n="hero-eyebrow">Retro Adventure</p>
+                    <h1 data-i18n="hero-title">WE ARE FNQ</h1>
+                    <p class="tagline" data-i18n="hero-tagline">A small studio with a huge pixel heart — experience the next indie world.</p>
+                    <div class="hero-actions">
+                        <a class="btn btn-primary" href="#features" data-i18n="btn-explore">Explore</a>
+                        <a class="btn btn-secondary" href="#lore" data-i18n="btn-story">Our Story</a>
+                    </div>
+                    <div class="account-banner" id="account-banner">
+                        <p data-i18n="account-banner">Create an account to buy games, top up, and unlock studio perks.</p>
+                    </div>
+                </div>
+                <div class="hero-panel">
+                    <div class="panel-glow"></div>
+                    <div class="panel-screen">
+                        <span>LEVEL 01</span>
+                        <h2>NEON QUEST</h2>
+                        <p>Soundtrack loading... Press start to join the quest.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GAME SHOWCASE SECTION -->
+            <section class="game-showcase" id="game-showcase">
+                <div class="showcase-header">
+                    <h2 data-i18n="showcase-title">HARVESTAY — Our Latest Release</h2>
+                    <p data-i18n="showcase-subtitle">Survive through cultivation. Build. Adapt. Thrive.</p>
+                </div>
+                
+                <div class="showcase-container">
+                    <div class="showcase-art">
+                        <img src="./gameArt.svg" alt="HARVESTAY Game Art" class="game-art-image">
+                    </div>
+                    
+                    <div class="showcase-description">
+                        <h3 data-i18n="game-title">A Farming Survival Adventure</h3>
+                        <p data-i18n="game-desc">In a world where civilization has collapsed, your only hope lies in the soil beneath your feet. Cultivate crops, raise livestock, and build your sanctuary while battling harsh weather, diseases, and the elements.</p>
+                        
+                        <div class="game-features-list">
+                            <div class="feature-item">
+                                <span class="feature-icon">🌾</span>
+                                <div>
+                                    <h4 data-i18n="feature-farming">Dynamic Farming</h4>
+                                    <p data-i18n="feature-farming-desc">Plant, grow, and harvest dozens of crops with realistic seasonal cycles.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="feature-item">
+                                <span class="feature-icon">🐄</span>
+                                <div>
+                                    <h4 data-i18n="feature-animals">Animal Husbandry</h4>
+                                    <p data-i18n="feature-animals-desc">Raise chickens, cows, and sheep to expand your survival strategy.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="feature-item">
+                                <span class="feature-icon">🏗️</span>
+                                <div>
+                                    <h4 data-i18n="feature-building">Base Building</h4>
+                                    <p data-i18n="feature-building-desc">Construct and upgrade structures to survive extreme weather and threats.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="feature-item">
+                                <span class="feature-icon">⚔️</span>
+                                <div>
+                                    <h4 data-i18n="feature-challenge">Strategic Challenges</h4>
+                                    <p data-i18n="feature-challenge-desc">Face droughts, floods, plagues, and manage your resources wisely.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FEATURES SECTION -->
+            <section class="features" id="features">
+                <h2 data-i18n="features-title">Game Vibes, Studio Soul</h2>
+                <div class="features-grid">
+                    <article class="feature-card">
+                        <h3 data-i18n="feature-1-title">Pixel Art</h3>
+                        <p data-i18n="feature-1-text">Handcrafted visuals with rich color palettes and moody lighting.</p>
+                    </article>
+                    <article class="feature-card">
+                        <h3 data-i18n="feature-2-title">Immersive Audio</h3>
+                        <p data-i18n="feature-2-text">Soundscapes that pulse with the rhythm of underground adventures.</p>
+                    </article>
+                    <article class="feature-card">
+                        <h3 data-i18n="feature-3-title">Story Driven</h3>
+                        <p data-i18n="feature-3-text">Every release has a narrative thread, a world to explore, and a soul to feel.</p>
+                    </article>
+                </div>
+            </section>
+
+            <!-- LORE/ABOUT SECTION -->
+            <section class="lore" id="lore">
+                <h2 data-i18n="lore-title">From Studio to Screen</h2>
+                <p data-i18n="lore-text">FNQ is a team of dreamers focused on creating bold, small-scale games with a familiar, nostalgic pulse. We build experiences that feel handcrafted, mysterious, and unforgettable.</p>
+                <div class="stats">
+                    <div class="stat-box">
+                        <p class="stat-number">3</p>
+                        <p class="stat-label" data-i18n="stat-1-label">Projects built</p>
+                    </div>
+                    <div class="stat-box">
+                        <p class="stat-number">1K+</p>
+                        <p class="stat-label" data-i18n="stat-2-label">Players joined</p>
+                    </div>
+                    <div class="stat-box">
+                        <p class="stat-number">∞</p>
+                        <p class="stat-label" data-i18n="stat-3-label">Indie energy</p>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            <p data-i18n="footer-text">© 2026 FNQ Studio — Built for those who play loud.</p>
+        </footer>
+    </div>
+
+    <!-- MODAL OVERLAY -->
+    <div class="modal-overlay hidden" id="modal-overlay"></div>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal hidden" id="login-modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="hideAllModals()" type="button">✕</button>
+            <h2 data-i18n="login-title">Login to FNQ</h2>
+            <form onsubmit="loginUser(event)">
+                <div class="form-group">
+                    <label for="login-email" data-i18n="label-email">Email</label>
+                    <input type="email" id="login-email" required placeholder="name@domain.com" data-i18n-attr="placeholder-email">
+                </div>
+                <div class="form-group">
+                    <label for="login-password" data-i18n="label-password">Password</label>
+                    <input type="password" id="login-password" required placeholder="••••••••" data-i18n-attr="placeholder-password">
+                </div>
+                <p id="login-message" class="form-message"></p>
+                <button type="submit" class="btn btn-primary btn-block" data-i18n="btn-login">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- REGISTER MODAL -->
+    <div class="modal hidden" id="register-modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="hideAllModals()" type="button">✕</button>
+            <h2 data-i18n="register-title">Create an Account</h2>
+            <form onsubmit="registerUser(event)">
+                <div class="form-group">
+                    <label for="register-name" data-i18n="label-name">Full Name</label>
+                    <input type="text" id="register-name" required placeholder="Alex Nguyen" data-i18n-attr="placeholder-name">
+                </div>
+                <div class="form-group">
+                    <label for="register-email" data-i18n="label-email">Email</label>
+                    <input type="email" id="register-email" required placeholder="name@domain.com" data-i18n-attr="placeholder-email">
+                </div>
+                <div class="form-group">
+                    <label for="register-password" data-i18n="label-password">Password</label>
+                    <input type="password" id="register-password" required placeholder="••••••••" data-i18n-attr="placeholder-password">
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm" data-i18n="label-confirm">Confirm Password</label>
+                    <input type="password" id="register-confirm" required placeholder="••••••••" data-i18n-attr="placeholder-confirm">
+                </div>
+                <p id="register-message" class="form-message"></p>
+                <button type="submit" class="btn btn-primary btn-block" data-i18n="btn-register">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
