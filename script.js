@@ -299,9 +299,13 @@ const formatCurrency = (value) => new Intl.NumberFormat('vi-VN').format(value);
  */
 const getUsers = () => {
     try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || '{}');
+        const data = localStorage.getItem(STORAGE_KEYS.users) || '{}';
+        console.log('📖 Reading from localStorage, size:', data.length);
+        const parsed = JSON.parse(data);
+        console.log('📖 Parsed users keys:', Object.keys(parsed));
+        return parsed;
     } catch (error) {
-        console.error('Error reading users from localStorage:', error);
+        console.error('❌ Error reading users from localStorage:', error);
         return {};
     }
 };
@@ -311,7 +315,16 @@ const getUsers = () => {
  * @param {Object} users - Users object to save
  */
 const saveUsers = (users) => {
-    localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
+    const jsonData = JSON.stringify(users);
+    localStorage.setItem(STORAGE_KEYS.users, jsonData);
+    console.log('💾 Saving users to localStorage:');
+    console.log('Users keys:', Object.keys(users));
+    console.log('Full data being saved:', users);
+    console.log('JSON size:', jsonData.length, 'bytes');
+    
+    // Verify save
+    const verified = JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || '{}');
+    console.log('✓ Verified saved data:', verified);
 };
 
 /**
@@ -337,8 +350,14 @@ const clearCurrentUser = () => localStorage.removeItem(STORAGE_KEYS.current);
  * @returns {Object|null} User profile object or null if not found
  */
 const getUserProfile = (email) => {
+    const normalizedEmail = email.toLowerCase();
     const users = getUsers();
-    return users[email.toLowerCase()] || null;
+    console.log('👤 Getting user profile for:', normalizedEmail);
+    console.log('👤 Available users:', Object.keys(users));
+    console.log('👤 User exists:', normalizedEmail in users);
+    const result = users[normalizedEmail] || null;
+    console.log('👤 Returning user:', result);
+    return result;
 };
 
 // ============================================================================
@@ -596,25 +615,37 @@ const bindAuthButtons = () => {
 const loginUser = (event) => {
     event.preventDefault();
     const email = document.getElementById('login-email').value.trim().toLowerCase();
-    const password = document.getElementById('login-password').value;
+    const password = document.getElementById('login-password').value.trim();
     
-    console.log('Login attempt:', { email, password });
+    console.log('=== LOGIN ATTEMPT ===');
+    console.log('Email:', email);
+    console.log('Password:', password);
+    
+    // Check all users in storage
+    const allUsers = getUsers();
+    console.log('All users in storage:', Object.keys(allUsers));
+    console.log('All users data:', allUsers);
     
     const user = getUserProfile(email);
-    console.log('User found:', user);
+    console.log('User found for email:', user);
     
     if (!user) {
-        console.log('User not found for email:', email);
+        console.log('❌ User not found for email:', email);
+        console.log('Available emails:', Object.keys(allUsers));
         setFormMessage('login-message', translations[currentLang]['login-error'], true);
         return;
     }
     
     if (user.password !== password) {
-        console.log('Password mismatch. Expected:', user.password, 'Got:', password);
+        console.log('❌ Password mismatch.');
+        console.log('Expected password:', user.password);
+        console.log('Got password:', password);
+        console.log('Match result:', user.password === password);
         setFormMessage('login-message', translations[currentLang]['login-error'], true);
         return;
     }
 
+    console.log('✓ Login successful!');
     setCurrentUser(email);
     setFormMessage('login-message', translations[currentLang]['login-success']);
     setTimeout(() => {
@@ -1051,35 +1082,41 @@ const backToHomeFromAdmin = () => {
  * Initialize default admin account if no users exist
  */
 const initializeDefaultAdmin = () => {
+    console.log('=== INITIALIZING DEFAULT ADMIN ===');
     const users = getUsers();
     const defaultAdminEmail = 'admin@fnqstudio.dev';
+    const defaultAdminPassword = 'admin123';
     
-    console.log('Initializing admin account...');
-    console.log('Users in storage:', Object.keys(users));
+    console.log('Current users:', Object.keys(users));
+    console.log('Check admin exists:', defaultAdminEmail in users);
     
     // Ensure default admin account exists
     if (!users[defaultAdminEmail]) {
-        console.log('Admin account not found, creating...');
-        users[defaultAdminEmail] = {
+        console.log('⚠️  Admin account not found, creating new one...');
+        const adminAccount = {
             name: 'Admin FNQ',
             email: defaultAdminEmail,
-            password: 'admin123',
+            password: defaultAdminPassword,
             balance: 1000000,
             history: [],
             createdAt: Date.now(),
             isAdmin: true
         };
         
+        console.log('Admin object to be saved:', adminAccount);
+        users[defaultAdminEmail] = adminAccount;
+        
         saveUsers(users);
-        console.log('✓ Default admin account created: admin@fnqstudio.dev / admin123');
+        console.log('✓ Admin account created and saved');
     } else {
         console.log('✓ Admin account already exists');
+        console.log('Existing admin data:', users[defaultAdminEmail]);
     }
     
-    console.log('All users in storage:', Object.keys(getUsers()));
-    // Verify admin account
+    // Final verification
     const adminUser = getUserProfile(defaultAdminEmail);
-    console.log('Admin user data:', adminUser);
+    console.log('✓ Final admin verification from storage:', adminUser);
+    console.log('=== ADMIN INIT COMPLETE ===');
 };
 
 // ============================================================================
