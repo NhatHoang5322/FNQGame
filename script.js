@@ -719,9 +719,13 @@ const downloadFull = () => {
     if (isPurchasing) return;
     isPurchasing = true;
     
+    const button = document.getElementById('dl-full');
+    if (button) button.disabled = true;
+    
     const currentUser = getCurrentUser();
     if (!currentUser) {
         showBannerMessage('Please login to purchase games');
+        if (button) button.disabled = false;
         isPurchasing = false;
         return;
     }
@@ -731,13 +735,18 @@ const downloadFull = () => {
             showBannerMessage(translations[currentLang]['buy-success']);
             setTimeout(() => {
                 showBannerMessage(translations[currentLang]['download-success']);
+                if (button) button.disabled = false;
+                isPurchasing = false;
             }, 1500);
+        } else {
+            if (button) button.disabled = false;
+            isPurchasing = false;
         }
     } else {
         showBannerMessage(translations[currentLang]['purchase-cancelled']);
+        if (button) button.disabled = false;
+        isPurchasing = false;
     }
-    
-    isPurchasing = false;
 };
 
 // ============================================================================
