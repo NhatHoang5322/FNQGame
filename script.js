@@ -1052,29 +1052,34 @@ const backToHomeFromAdmin = () => {
  */
 const initializeDefaultAdmin = () => {
     const users = getUsers();
+    const defaultAdminEmail = 'admin@fnqstudio.dev';
+    
+    console.log('Initializing admin account...');
     console.log('Users in storage:', Object.keys(users));
     
-    // If there are already users, don't create default admin
-    if (Object.keys(users).length > 0) {
-        console.log('Users already exist, skipping default admin creation');
-        return;
+    // Ensure default admin account exists
+    if (!users[defaultAdminEmail]) {
+        console.log('Admin account not found, creating...');
+        users[defaultAdminEmail] = {
+            name: 'Admin FNQ',
+            email: defaultAdminEmail,
+            password: 'admin123',
+            balance: 1000000,
+            history: [],
+            createdAt: Date.now(),
+            isAdmin: true
+        };
+        
+        saveUsers(users);
+        console.log('✓ Default admin account created: admin@fnqstudio.dev / admin123');
+    } else {
+        console.log('✓ Admin account already exists');
     }
-
-    // Create default admin account
-    const defaultAdminEmail = 'admin@fnqstudio.dev';
-    users[defaultAdminEmail] = {
-        name: 'Admin FNQ',
-        email: defaultAdminEmail,
-        password: 'admin123',
-        balance: 1000000,
-        history: [],
-        createdAt: Date.now(),
-        isAdmin: true
-    };
-
-    saveUsers(users);
-    console.log('Default admin account created: admin@fnqstudio.dev / admin123');
-    console.log('Users after creation:', Object.keys(getUsers()));
+    
+    console.log('All users in storage:', Object.keys(getUsers()));
+    // Verify admin account
+    const adminUser = getUserProfile(defaultAdminEmail);
+    console.log('Admin user data:', adminUser);
 };
 
 // ============================================================================
