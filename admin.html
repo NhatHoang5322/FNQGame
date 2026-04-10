@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FNQ Studio - Admin Dashboard">
+    <title>FNQ Admin - Quản lý tài khoản</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a0033 0%, #2d0a4e 100%);
+            color: #e8e4f3;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(124, 58, 237, 0.3);
+        }
+
+        .admin-header h1 {
+            font-size: 2.5rem;
+            color: #7c3aed;
+            margin: 0;
+        }
+
+        .admin-header-info {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .admin-stat {
+            text-align: center;
+            background: rgba(124, 58, 237, 0.1);
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(124, 58, 237, 0.2);
+        }
+
+        .admin-stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #7c3aed;
+            display: block;
+        }
+
+        .admin-stat-label {
+            font-size: 0.9rem;
+            color: #b7b0d1;
+            margin-top: 5px;
+        }
+
+        .admin-logout {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #ff6b6b;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .admin-logout:hover {
+            background: rgba(239, 68, 68, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .admin-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+
+        .admin-sidebar {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 25px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .admin-sidebar h2 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #7c3aed;
+        }
+
+        .admin-sidebar-btn {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            border-radius: 8px;
+            color: #e8e4f3;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .admin-sidebar-btn:hover,
+        .admin-sidebar-btn.active {
+            background: rgba(124, 58, 237, 0.3);
+            border-color: #7c3aed;
+            color: #fff;
+        }
+
+        .admin-main {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        .admin-section h2 {
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            color: #7c3aed;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .users-table thead {
+            background: rgba(124, 58, 237, 0.15);
+            border-bottom: 2px solid rgba(124, 58, 237, 0.3);
+        }
+
+        .users-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #7c3aed;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .users-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            color: #e8e4f3;
+        }
+
+        .users-table tbody tr:hover {
+            background: rgba(124, 58, 237, 0.05);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-edit {
+            background: rgba(124, 58, 237, 0.2);
+            color: #7c3aed;
+            border: 1px solid rgba(124, 58, 237, 0.4);
+        }
+
+        .btn-edit:hover {
+            background: rgba(124, 58, 237, 0.3);
+            border-color: #7c3aed;
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: #ff6b6b;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #d2cfe6;
+            font-size: 0.95rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            color: #e8e4f3;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #7c3aed;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 12px rgba(124, 58, 237, 0.2);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-submit {
+            flex: 1;
+            padding: 12px 24px;
+            background: #7c3aed;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background: #6d2dd6;
+            transform: translateY(-2px);
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e8e4f3;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .message.success {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #b7b0d1;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #1a0033;
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #b7b0d1;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: #e8e4f3;
+        }
+
+        @media (max-width: 1024px) {
+            .admin-content {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-sidebar {
+                position: static;
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .admin-sidebar-btn {
+                flex: 1;
+                min-width: 150px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .admin-header-info {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .admin-stat {
+                width: 100%;
+            }
+
+            .users-table {
+                font-size: 0.9rem;
+            }
+
+            .users-table th,
+            .users-table td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <h1>🎮 Admin Dashboard</h1>
+            <div class="admin-header-info">
+                <div class="admin-stat">
+                    <span class="admin-stat-value" id="stat-users">0</span>
+                    <span class="admin-stat-label">Người dùng</span>
+                </div>
+                <div class="admin-stat">
+                    <span class="admin-stat-value" id="stat-balance">0</span>
+                    <span class="admin-stat-label">Tổng số dư</span>
+                </div>
+                <button class="admin-logout" onclick="adminLogout()">Đăng xuất</button>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="admin-content">
+            <!-- Sidebar -->
+            <div class="admin-sidebar">
+                <h2>Menu</h2>
+                <button class="admin-sidebar-btn active" onclick="switchTab('users')">👥 Danh sách người dùng</button>
+                <button class="admin-sidebar-btn" onclick="switchTab('create')">➕ Tạo tài khoản mới</button>
+            </div>
+
+            <!-- Main Content -->
+            <div class="admin-main">
+                <!-- Message -->
+                <div id="admin-message" style="display: none;"></div>
+
+                <!-- Users List Tab -->
+                <div id="tab-users" class="admin-section active">
+                    <h2>Danh sách người dùng</h2>
+                    <div id="users-list-container"></div>
+                </div>
+
+                <!-- Create User Tab -->
+                <div id="tab-create" class="admin-section">
+                    <h2>Tạo tài khoản mới</h2>
+                    <form onsubmit="adminCreateUser(event)">
+                        <div class="form-group">
+                            <label>Họ tên</label>
+                            <input type="text" id="create-name" required placeholder="Nhập họ tên">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="create-email" required placeholder="user@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Mật khẩu</label>
+                            <input type="password" id="create-password" required placeholder="••••••••">
+                        </div>
+                        <div class="form-group">
+                            <label>Số dư ban đầu (VNĐ)</label>
+                            <input type="number" id="create-balance" value="100000" min="0">
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-submit">Tạo tài khoản</button>
+                            <button type="button" class="btn-cancel" onclick="resetCreateForm()">Hủy</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal-overlay" class="modal-overlay">
+        <div class="modal">
+            <button class="modal-close" onclick="closeEditModal()">✕</button>
+            <h2 style="margin-top: 0; color: #7c3aed;">Chỉnh sửa tài khoản</h2>
+            <form onsubmit="adminSaveUser(event)">
+                <div class="form-group">
+                    <label>Họ tên</label>
+                    <input type="text" id="edit-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="edit-email" required readonly>
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu (để trống nếu không thay đổi)</label>
+                    <input type="password" id="edit-password" placeholder="••••••••">
+                </div>
+                <div class="form-group">
+                    <label>Số dư (VNĐ)</label>
+                    <input type="number" id="edit-balance" required min="0">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">Lưu thay đổi</button>
+                    <button type="button" class="btn-cancel" onclick="closeEditModal()">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Admin Page Script
+        let editingEmail = null;
+
+        // Check if user is admin
+        function checkAdminAccess() {
+            const currentUser = localStorage.getItem('fnqCurrentUser');
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập');
+                window.location.href = 'index.html';
+                return false;
+            }
+
+            const users = JSON.parse(localStorage.getItem('fnqUsers') || '{}');
+            const user = users[currentUser];
+
+            if (!user || !user.isAdmin) {
+                alert('Bạn không có quyền truy cập trang này');
+                window.location.href = 'index.html';
+                return false;
+            }
+
+            return true;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!checkAdminAccess()) return;
+            loadUsersList();
+            updateStats();
+        });
+
+        // Switch tabs
+        function switchTab(tabName) {
+            document.querySelectorAll('.admin-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.admin-sidebar-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Load users list
+        function loadUsersList() {
+            const users = JSON.parse(localStorage.getItem('fnqUsers') || '{}');
+            const container = document.getElementById('users-list-container');
+
+            if (Object.keys(users).length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">👤</div><p>Không có người dùng</p></div>';
+                return;
+            }
+
+            let html = '<table class="users-table"><thead><tr><th>Tên</th><th>Email</th><th>Số dư</th><th>Hành động</th></tr></thead><tbody>';
+
+            Object.entries(users).forEach(([email, user]) => {
+                html += `
+                    <tr>
+                        <td>${user.name || 'N/A'}</td>
+                        <td>${email}</td>
+                        <td>${new Intl.NumberFormat('vi-VN').format(user.balance || 0)} VNĐ</td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="btn-small btn-edit" onclick="openEditModal('${email}')">Sửa</button>
+                                <button class="btn-small btn-delete" onclick="deleteUser('${email}')">Xóa</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // Update stats
+        function updateStats() {
+            const users = JSON.parse(localStorage.getItem('fnqUsers') || '{}');
+            const totalBalance = Object.values(users).reduce((sum, user) => sum + (user.balance || 0), 0);
+
+            document.getElementById('stat-users').textContent = Object.keys(users).length;
+            document.getElementById('stat-balance').textContent = new Intl.NumberFormat('vi-VN').format(totalBalance);
+        }
+
+        // Open edit modal
+        function openEditModal(email) {
+            const users = JSON.parse(localStorage.getItem('fnqUsers') || '{}');
+            const user = users[email];
+
+            if (!user) return;
+
+            editingEmail = email;
+            document.getElementById('edit-name').value = user.name || '';
+            document.getElementById('edit-email').value = email;
+            document.getElementById('edit-password').value = '';
+            document.getElementById('edit-balance').value = user.balance || 0;
+            document.getElementById('edit-modal-overlay').classList.add('active');
+        }
+
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('edit-modal-overlay').classList.remove('active');
+            editingEmail = null;
+        }
+
+        // Save user
+        function adminSaveUser(event) {
+            event.preventDefault();
+
+            const users = JSON.parse(localStorage.getItem('fnqUsers') || '{}');
+            const user = users[editingEmail];
+
+            if (!user) return;
+
+            user.name = document.getElementById('edit-name').value;
+            const newPassword = document.getElementById('edit-password').value;
+            if (newPassword) {
+                user.password = newPassword;
+            }
+            user.balance = parseInt(document.getElementById('edit-balance').value) || 0;
+
+            localStorage.setItem('fnqUsers', JSON.stringify(users));
+            showMessage('Cập nhật tài khoản thành công', 'success');
+            closeEditModal();
+            loadUsersList();
+            updateStats();
+        }
+
+        // Delete user
+        function deleteUser(email) {
+            if (!confirm('Bạn chắc chắn muốn xóa tài khoản này?')) return;
+
+            const users = JSON.parse(localStorage.getItem('fnqUsers') || '{}');
+            delete users[email];
+
+            localStorage.setItem('fnqUsers', JSON.stringify(users));
+            showMessage('Xóa tài khoản thành công', 'success');
+            loadUsersList();
+            updateStats();
+        }
+
+        // Create user
+        function adminCreateUser(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('create-name').value;
+            const email = document.getElementById('create-email').value.toLowerCase();
+            const password = document.getElementById('create-password').value;
+            const balance = parseInt(document.getElementById('create-balance').value) || 0;
+
+            const users = JSON.parse(localStorage.getItem('fnqUsers') || '{}');
+
+            if (users[email]) {
+                showMessage('Email này đã được sử dụng', 'error');
+                return;
+            }
+
+            users[email] = {
+                name,
+                email,
+                password,
+                balance,
+                history: [],
+                createdAt: Date.now(),
+                isAdmin: false
+            };
+
+            localStorage.setItem('fnqUsers', JSON.stringify(users));
+            showMessage('Tạo tài khoản thành công', 'success');
+            resetCreateForm();
+            switchTab('users');
+            loadUsersList();
+            updateStats();
+        }
+
+        // Reset form
+        function resetCreateForm() {
+            document.querySelector('#tab-create form').reset();
+            document.getElementById('create-balance').value = '100000';
+        }
+
+        // Show message
+        function showMessage(text, type) {
+            const msg = document.getElementById('admin-message');
+            msg.textContent = text;
+            msg.className = 'message ' + type;
+            msg.style.display = 'block';
+
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 3000);
+        }
+
+        // Admin logout
+        function adminLogout() {
+            localStorage.removeItem('fnqCurrentUser');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

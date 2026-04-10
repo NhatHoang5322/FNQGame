@@ -40,7 +40,7 @@
                         <div class="account-actions-dropdown">
                             <button class="btn btn-primary" type="button" id="btn-topup" data-i18n="btn-topup">Top up 100k</button>
                             <button class="btn btn-secondary" type="button" id="btn-buygame" data-i18n="btn-buy-game">Buy game 50k</button>
-                            <button class="btn btn-secondary" type="button" id="btn-admin" data-i18n="btn-admin" onclick="showAdminPage()" style="display: none;">Admin</button>
+                            <a href="admin.html" class="btn btn-secondary" type="button" id="btn-admin" data-i18n="btn-admin" style="display: none; text-decoration: none; text-align: center;">Admin Dashboard</a>
                         </div>
                         <div class="account-history">
                             <p class="history-title" data-i18n="history-title">History</p>
@@ -150,32 +150,6 @@
 
                 <button class="btn btn-primary btn-wide" type="button" id="confirm-payment" onclick="confirmPayment()" data-i18n="qr-confirm-btn">Xác nhận thanh toán</button>
                 <button class="btn btn-secondary btn-wide" type="button" id="cancel-payment" onclick="goBackPaymentMethods()" data-i18n="qr-cancel-btn">Hủy</button>
-            </div>
-        </section>
-
-        <!-- ADMIN PAGE -->
-        <section id="admin-page" class="admin-page hidden">
-            <div class="admin-header">
-                <button class="back-button" type="button" id="back-home-admin" onclick="backToHomeFromAdmin()" data-i18n="btn-back">← Back to Home</button>
-                <h1 data-i18n="admin-title">Quản lý tài khoản</h1>
-            </div>
-            <div class="admin-content">
-                <div class="user-list">
-                    <h2 data-i18n="admin-users-title">Danh sách người dùng</h2>
-                    <table id="users-table">
-                        <thead>
-                            <tr>
-                                <th data-i18n="admin-th-name">Tên</th>
-                                <th data-i18n="admin-th-email">Email</th>
-                                <th data-i18n="admin-th-balance">Số dư</th>
-                                <th data-i18n="admin-th-actions">Hành động</th>
-                            </tr>
-                        </thead>
-                        <tbody id="users-tbody">
-                            <!-- Users will be populated here -->
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </section>
 

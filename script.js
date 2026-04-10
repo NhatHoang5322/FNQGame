@@ -540,7 +540,11 @@ const updateAuthUI = () => {
         // Show admin button if user is admin
         const adminBtn = document.getElementById('btn-admin');
         if (adminBtn) {
-            adminBtn.style.display = isAdmin(currentEmail) ? 'inline-block' : 'none';
+            if (isAdmin(currentEmail)) {
+                adminBtn.style.display = 'inline-block';
+            } else {
+                adminBtn.style.display = 'none';
+            }
         }
     } else {
         // User is not logged in
@@ -983,27 +987,6 @@ const resetPassword = (event) => {
 // ============================================================================
 
 /**
- * Show admin page with user management
- */
-const showAdminPage = () => {
-    const currentUser = getCurrentUser();
-    const users = getUsers();
-    const user = users[currentUser];
-
-    // Check if user is admin (for now, check if email contains 'admin' or is first user)
-    if (!user || !isAdmin(currentUser)) {
-        alert('Access denied. Admin only.');
-        return;
-    }
-
-    document.getElementById('main-content').classList.add('hidden');
-    document.getElementById('admin-page').classList.remove('hidden');
-    renderUsersList();
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
-};
-
-/**
  * Check if user is admin
  * @param {string} email - User email
  * @returns {boolean} Whether user is admin
@@ -1012,66 +995,6 @@ const isAdmin = (email) => {
     const users = getUsers();
     const user = users[email];
     return user && user.isAdmin === true;
-};
-
-/**
- * Render users list in admin page
- */
-const renderUsersList = () => {
-    const users = getUsers();
-    const tbody = document.getElementById('users-tbody');
-    
-    if (!tbody) return;
-    tbody.innerHTML = '';
-
-    Object.entries(users).forEach(([email, user]) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${user.name || 'N/A'}</td>
-            <td>${email}</td>
-            <td>${new Intl.NumberFormat('vi-VN').format(user.balance || 0)} VNĐ</td>
-            <td>
-                <div class="table-actions">
-                    <button class="btn-edit" onclick="editUser('${email}')" data-i18n="btn-edit">Edit</button>
-                    <button class="btn-delete" onclick="deleteUser('${email}')" data-i18n="btn-delete">Delete</button>
-                </div>
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
-
-    setLanguage(currentLang);
-};
-
-/**
- * Edit user (open edit modal)
- * @param {string} email - User email to edit
- */
-const editUser = (email) => {
-    alert(`Edit user: ${email}`);
-    // TODO: Implement edit user modal
-};
-
-/**
- * Delete user
- * @param {string} email - User email to delete
- */
-const deleteUser = (email) => {
-    if (confirm(`Delete user ${email}?`)) {
-        const users = getUsers();
-        delete users[email];
-        saveUsers(users);
-        renderUsersList();
-        showBannerMessage('User deleted successfully');
-    }
-};
-
-/**
- * Go back to home from admin page
- */
-const backToHomeFromAdmin = () => {
-    document.getElementById('admin-page').classList.add('hidden');
-    document.getElementById('main-content').classList.remove('hidden');
 };
 
 // ============================================================================
