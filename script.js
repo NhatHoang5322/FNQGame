@@ -1033,6 +1033,37 @@ const backToHomeFromAdmin = () => {
 };
 
 // ============================================================================
+// DEFAULT ADMIN INITIALIZATION
+// ============================================================================
+
+/**
+ * Initialize default admin account if no users exist
+ */
+const initializeDefaultAdmin = () => {
+    const users = getUsers();
+    
+    // If there are already users, don't create default admin
+    if (Object.keys(users).length > 0) {
+        return;
+    }
+
+    // Create default admin account
+    const defaultAdminEmail = 'admin@fnqstudio.dev';
+    users[defaultAdminEmail] = {
+        name: 'Admin FNQ',
+        email: defaultAdminEmail,
+        password: 'admin123',
+        balance: 1000000,
+        history: [],
+        createdAt: Date.now(),
+        isAdmin: true
+    };
+
+    saveUsers(users);
+    console.log('Default admin account created: admin@fnqstudio.dev / admin123');
+};
+
+// ============================================================================
 // INITIALIZATION
 // ============================================================================
 
@@ -1040,6 +1071,9 @@ const backToHomeFromAdmin = () => {
  * Initialize application on page load
  */
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize default admin account
+    initializeDefaultAdmin();
+
     // Restore user's language preference
     const savedLang = localStorage.getItem(STORAGE_KEYS.lang) || 'vi';
     setLanguage(savedLang);
