@@ -106,6 +106,20 @@ const translations = {
         'error-password-match': 'Mật khẩu và xác nhận phải giống nhau.',
         'topup-success': 'Nạp tiền thành công! Số dư đã được cập nhật.',
         'logoff-message': 'Bạn đã đăng xuất. Đăng nhập lại để tiếp tục.',
+        'forgot-password-link': 'Quên mật khẩu?',
+        'forgot-title': 'Quên mật khẩu',
+        'btn-reset': 'Gửi yêu cầu',
+        'reset-success': 'Mật khẩu đã được gửi đến email của bạn.',
+        'reset-error': 'Email không tồn tại.',
+        'admin-title': 'Quản lý tài khoản',
+        'admin-users-title': 'Danh sách người dùng',
+        'admin-th-name': 'Tên',
+        'admin-th-email': 'Email',
+        'admin-th-balance': 'Số dư',
+        'admin-th-actions': 'Hành động',
+        'btn-admin': 'Admin',
+        'btn-edit': 'Sửa',
+        'btn-delete': 'Xóa',
         'recharge-title': 'NẠP TIỀN',
         'recharge-subtitle': 'Chọn phương thức thanh toán để nạp tiền vào tài khoản của bạn',
         'payment-credit': 'Thẻ Tín dụng',
@@ -212,6 +226,20 @@ const translations = {
         'error-password-match': 'Password and confirmation must match.',
         'topup-success': 'Top up successful! Balance updated.',
         'logoff-message': 'You have signed out. Log in again to continue.',
+        'forgot-password-link': 'Forgot password?',
+        'forgot-title': 'Forgot Password',
+        'btn-reset': 'Send Request',
+        'reset-success': 'Password has been sent to your email.',
+        'reset-error': 'Email does not exist.',
+        'admin-title': 'Account Management',
+        'admin-users-title': 'User List',
+        'admin-th-name': 'Name',
+        'admin-th-email': 'Email',
+        'admin-th-balance': 'Balance',
+        'admin-th-actions': 'Actions',
+        'btn-admin': 'Admin',
+        'btn-edit': 'Edit',
+        'btn-delete': 'Delete',
         'recharge-title': 'TOP UP',
         'recharge-subtitle': 'Choose a payment method to add money to your account',
         'payment-credit': 'Credit Card',
@@ -369,7 +397,7 @@ const hideModal = (modalId) => {
  * Hide all active modals
  */
 const hideAllModals = () => {
-    ['login-modal', 'register-modal'].forEach((id) => {
+    ['login-modal', 'register-modal', 'forgot-modal'].forEach((id) => {
         document.getElementById(id).classList.add('hidden');
     });
     document.getElementById('modal-overlay').classList.add('hidden');
@@ -489,6 +517,12 @@ const updateAuthUI = () => {
         renderHistory(user);
         authArea.classList.add('hidden');
         accountBanner.querySelector('p').textContent = translations[currentLang]['account-welcome-user'].replace('{name}', user.name);
+        
+        // Show admin button if user is admin
+        const adminBtn = document.getElementById('btn-admin');
+        if (adminBtn) {
+            adminBtn.style.display = isAdmin(currentEmail) ? 'inline-block' : 'none';
+        }
     } else {
         // User is not logged in
         accountPanel.classList.add('hidden');
@@ -601,13 +635,15 @@ const registerUser = (event) => {
     }
 
     // Create new user with 100k VNĐ starting balance
+    const isFirstUser = Object.keys(users).length === 0;
     users[email] = {
         name: name || email.split('@')[0],
         email,
         password,
         balance: 100000,
         history: [],
-        createdAt: Date.now()
+        createdAt: Date.now(),
+        isAdmin: isFirstUser
     };
 
     saveUsers(users);
@@ -851,8 +887,149 @@ const showHomePage = (event) => {
     document.getElementById('game-shop').classList.add('hidden');
     document.getElementById('recharge-page').classList.add('hidden');
     document.getElementById('payment-qr-page').classList.add('hidden');
+    document.getElementById('admin-page').classList.add('hidden');
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
+};
+
+// ============================================================================
+// PASSWORD RESET & FORGOT PASSWORD
+// ============================================================================
+
+/**
+ * Show forgot password modal
+ * @param {Event} event - Click event
+ */
+const showForgotPassword = (event) => {
+    event.preventDefault();
+    hideModal('login-modal');
+    showModal('forgot-modal');
+};
+
+/**
+ * Handle password reset request
+ * @param {Event} event - Form submit event
+ */
+const resetPassword = (event) => {
+    event.preventDefault();
+    const email = document.getElementById('forgot-email').value.trim().toLowerCase();
+    const user = getUserProfile(email);
+
+    if (!user) {
+        setFormMessage('forgot-message', translations[currentLang]['reset-error'], true);
+        return;
+    }
+
+    // In production, send email with reset link
+    // For now, show a message indicating the password would be sent
+    const tempPassword = Math.random().toString(36).slice(-8);
+    user.password = tempPassword;
+    const users = getUsers();
+    users[email] = user;
+    saveUsers(users);
+
+    setFormMessage('forgot-message', `${translations[currentLang]['reset-success']} (${tempPassword})`, false);
+    
+    setTimeout(() => {
+        hideAllModals();
+        document.getElementById('forgot-email').value = '';
+    }, 2000);
+};
+
+// ============================================================================
+// ADMIN MANAGEMENT
+// ============================================================================
+
+/**
+ * Show admin page with user management
+ */
+const showAdminPage = () => {
+    const currentUser = getCurrentUser();
+    const users = getUsers();
+    const user = users[currentUser];
+
+    // Check if user is admin (for now, check if email contains 'admin' or is first user)
+    if (!user || !isAdmin(currentUser)) {
+        alert('Access denied. Admin only.');
+        return;
+    }
+
+    document.getElementById('main-content').classList.add('hidden');
+    document.getElementById('admin-page').classList.remove('hidden');
+    renderUsersList();
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+};
+
+/**
+ * Check if user is admin
+ * @param {string} email - User email
+ * @returns {boolean} Whether user is admin
+ */
+const isAdmin = (email) => {
+    const users = getUsers();
+    const user = users[email];
+    return user && user.isAdmin === true;
+};
+
+/**
+ * Render users list in admin page
+ */
+const renderUsersList = () => {
+    const users = getUsers();
+    const tbody = document.getElementById('users-tbody');
+    
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    Object.entries(users).forEach(([email, user]) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${user.name || 'N/A'}</td>
+            <td>${email}</td>
+            <td>${new Intl.NumberFormat('vi-VN').format(user.balance || 0)} VNĐ</td>
+            <td>
+                <div class="table-actions">
+                    <button class="btn-edit" onclick="editUser('${email}')" data-i18n="btn-edit">Edit</button>
+                    <button class="btn-delete" onclick="deleteUser('${email}')" data-i18n="btn-delete">Delete</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    setLanguage(currentLang);
+};
+
+/**
+ * Edit user (open edit modal)
+ * @param {string} email - User email to edit
+ */
+const editUser = (email) => {
+    alert(`Edit user: ${email}`);
+    // TODO: Implement edit user modal
+};
+
+/**
+ * Delete user
+ * @param {string} email - User email to delete
+ */
+const deleteUser = (email) => {
+    if (confirm(`Delete user ${email}?`)) {
+        const users = getUsers();
+        delete users[email];
+        saveUsers(users);
+        renderUsersList();
+        showBannerMessage('User deleted successfully');
+    }
+};
+
+/**
+ * Go back to home from admin page
+ */
+const backToHomeFromAdmin = () => {
+    document.getElementById('admin-page').classList.add('hidden');
+    document.getElementById('main-content').classList.remove('hidden');
 };
 
 // ============================================================================
