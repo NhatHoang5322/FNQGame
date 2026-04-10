@@ -714,10 +714,15 @@ const downloadDemo = () => {
 /**
  * Purchase and download full version
  */
+let isPurchasing = false;
 const downloadFull = () => {
+    if (isPurchasing) return;
+    isPurchasing = true;
+    
     const currentUser = getCurrentUser();
     if (!currentUser) {
         showBannerMessage('Please login to purchase games');
+        isPurchasing = false;
         return;
     }
 
@@ -731,6 +736,8 @@ const downloadFull = () => {
     } else {
         showBannerMessage(translations[currentLang]['purchase-cancelled']);
     }
+    
+    isPurchasing = false;
 };
 
 // ============================================================================
@@ -773,15 +780,23 @@ const selectPaymentMethod = (method) => {
     const qrContainer = document.getElementById('qr-code-container');
     qrContainer.innerHTML = '';
     
-    // Generate sample QR code (in production, this would be from payment gateway)
-    new QRCode(qrContainer, {
-        text: `FNQ-Payment-${method}-100000-${Date.now()}`,
-        width: 200,
-        height: 200,
-        correctLevel: QRCode.CorrectLevel.H,
-        colorDark: '#7c3aed',
-        colorLight: '#f5f4fb'
-    });
+    try {
+        if (typeof QRCode === 'undefined') {
+            throw new Error('QRCode library not loaded');
+        }
+        // Generate sample QR code (in production, this would be from payment gateway)
+        new QRCode(qrContainer, {
+            text: `FNQ-Payment-${method}-100000-${Date.now()}`,
+            width: 200,
+            height: 200,
+            correctLevel: QRCode.CorrectLevel.H,
+            colorDark: '#7c3aed',
+            colorLight: '#f5f4fb'
+        });
+    } catch (error) {
+        console.error('Error generating QR code:', error);
+        qrContainer.innerHTML = '<p style="color: red;">Không thể tạo mã QR. Vui lòng thử lại.</p>';
+    }
 };
 
 /**
@@ -795,7 +810,11 @@ const goBackPaymentMethods = () => {
 /**
  * Confirm payment and add balance
  */
+let isProcessingPayment = false;
 const confirmPayment = () => {
+    if (isProcessingPayment) return;
+    isProcessingPayment = true;
+    
     topUpBalance(100000);
     showBannerMessage(translations[currentLang]['payment-success']);
     
@@ -804,6 +823,7 @@ const confirmPayment = () => {
         document.getElementById('main-content').classList.remove('hidden');
         document.body.scrollTop = 0;
         document.documentElement.scrollTop = 0;
+        isProcessingPayment = false;
     }, 2000);
 };
 
