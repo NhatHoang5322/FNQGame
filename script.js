@@ -597,9 +597,20 @@ const loginUser = (event) => {
     event.preventDefault();
     const email = document.getElementById('login-email').value.trim().toLowerCase();
     const password = document.getElementById('login-password').value;
+    
+    console.log('Login attempt:', { email, password });
+    
     const user = getUserProfile(email);
-
-    if (!user || user.password !== password) {
+    console.log('User found:', user);
+    
+    if (!user) {
+        console.log('User not found for email:', email);
+        setFormMessage('login-message', translations[currentLang]['login-error'], true);
+        return;
+    }
+    
+    if (user.password !== password) {
+        console.log('Password mismatch. Expected:', user.password, 'Got:', password);
         setFormMessage('login-message', translations[currentLang]['login-error'], true);
         return;
     }
@@ -1041,9 +1052,11 @@ const backToHomeFromAdmin = () => {
  */
 const initializeDefaultAdmin = () => {
     const users = getUsers();
+    console.log('Users in storage:', Object.keys(users));
     
     // If there are already users, don't create default admin
     if (Object.keys(users).length > 0) {
+        console.log('Users already exist, skipping default admin creation');
         return;
     }
 
@@ -1061,6 +1074,7 @@ const initializeDefaultAdmin = () => {
 
     saveUsers(users);
     console.log('Default admin account created: admin@fnqstudio.dev / admin123');
+    console.log('Users after creation:', Object.keys(getUsers()));
 };
 
 // ============================================================================
