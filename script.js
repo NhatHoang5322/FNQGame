@@ -1046,12 +1046,118 @@ const initializeDefaultAdmin = () => {
 // INITIALIZATION
 // ============================================================================
 
+// ============================================================================
+// NOTIFICATION SYSTEM
+// ============================================================================
+
+/**
+ * Display notifications from admin
+ */
+const displayNotifications = () => {
+    const news = JSON.parse(localStorage.getItem('fnqNews') || '[]');
+    const container = document.getElementById('notifications-container');
+    
+    if (!container || news.length === 0) return;
+
+    let activeNews = [];
+    
+    // Filter active news (not expired)
+    news.forEach((item) => {
+        if (!item.expiry || item.expiry > Date.now()) {
+            activeNews.push(item);
+        }
+    });
+
+    // Show only first 3 active news
+    activeNews = activeNews.slice(0, 3);
+
+    container.innerHTML = '';
+
+    activeNews.forEach((item, index) => {
+        const typeColors = {
+            'info': { bg: 'rgba(59, 130, 246, 0.2)', border: 'rgba(59, 130, 246, 0.5)', text: '#3b82f6' },
+            'update': { bg: 'rgba(34, 197, 94, 0.2)', border: 'rgba(34, 197, 94, 0.5)', text: '#22c55e' },
+            'warning': { bg: 'rgba(245, 158, 11, 0.2)', border: 'rgba(245, 158, 11, 0.5)', text: '#f59e0b' },
+            'success': { bg: 'rgba(34, 197, 94, 0.2)', border: 'rgba(34, 197, 94, 0.5)', text: '#22c55e' }
+        };
+
+        const colors = typeColors[item.type] || typeColors['info'];
+        const typeIcon = {
+            'info': 'ℹ️',
+            'update': '🔄',
+            'warning': '⚠️',
+            'success': '✓'
+        }[item.type] || '📢';
+
+        const notif = document.createElement('div');
+        notif.style.cssText = `
+            background: ${colors.bg};
+            border: 2px solid ${colors.border};
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            animation: slideIn 0.3s ease;
+            color: #e8e4f3;
+        `;
+
+        notif.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: start; gap: 15px;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; color: ${colors.text}; margin-bottom: 5px;">
+                        <span style="font-size: 1.2rem; margin-right: 8px;">${typeIcon}</span>${item.title}
+                    </div>
+                    <div style="font-size: 0.95rem; line-height: 1.5; color: #d2cfe6;">
+                        ${item.content.substring(0, 200)}${item.content.length > 200 ? '...' : ''}
+                    </div>
+                </div>
+                <button onclick="this.parentElement.parentElement.remove()" style="
+                    background: none;
+                    border: none;
+                    color: #b7b0d1;
+                    font-size: 1.2rem;
+                    cursor: pointer;
+                    padding: 0;
+                    min-width: auto;
+                ">✕</button>
+            </div>
+        `;
+
+        container.appendChild(notif);
+    });
+
+    // Add animation style if not exists
+    if (!document.getElementById('notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'notification-styles';
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(-100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+};
+
+// ============================================================================
+// INITIALIZATION
+// ============================================================================
+
 /**
  * Initialize application on page load
  */
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize default admin account
     initializeDefaultAdmin();
+
+    // Display admin notifications
+    displayNotifications();
 
     // Restore user's language preference
     const savedLang = localStorage.getItem(STORAGE_KEYS.lang) || 'vi';

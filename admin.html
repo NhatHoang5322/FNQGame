@@ -421,6 +421,7 @@
                 <h2>Menu</h2>
                 <button class="admin-sidebar-btn active" onclick="switchTab('users')">👥 Danh sách người dùng</button>
                 <button class="admin-sidebar-btn" onclick="switchTab('create')">➕ Tạo tài khoản mới</button>
+                <button class="admin-sidebar-btn" onclick="switchTab('news')">📢 Thông báo</button>
             </div>
 
             <!-- Main Content -->
@@ -459,6 +460,41 @@
                             <button type="button" class="btn-cancel" onclick="resetCreateForm()">Hủy</button>
                         </div>
                     </form>
+                </div>
+
+                <!-- News/Announcement Tab -->
+                <div id="tab-news" class="admin-section">
+                    <h2>📢 Thông báo & Cập nhật</h2>
+                    <form onsubmit="adminCreateNews(event)">
+                        <div class="form-group">
+                            <label>Tiêu đề</label>
+                            <input type="text" id="news-title" required placeholder="Nhập tiêu đề thông báo">
+                        </div>
+                        <div class="form-group">
+                            <label>Nội dung</label>
+                            <textarea id="news-content" required placeholder="Nhập nội dung thông báo" style="width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.04); color: #e8e4f3; font-size: 0.95rem; min-height: 120px; font-family: inherit; transition: all 0.2s ease;"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Loại thông báo</label>
+                            <select id="news-type" style="width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.04); color: #e8e4f3; font-size: 0.95rem;">
+                                <option value="info">ℹ️ Thông tin</option>
+                                <option value="update">🔄 Cập nhật</option>
+                                <option value="warning">⚠️ Cảnh báo</option>
+                                <option value="success">✓ Thành công</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ngày hết hạn (tùy chọn)</label>
+                            <input type="date" id="news-expiry">
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-submit">Gửi thông báo</button>
+                            <button type="button" class="btn-cancel" onclick="resetNewsForm()">Hủy</button>
+                        </div>
+                    </form>
+
+                    <h3 style="margin-top: 40px; color: #7c3aed;">Danh sách thông báo</h3>
+                    <div id="news-list-container"></div>
                 </div>
             </div>
         </div>
@@ -525,6 +561,7 @@
             if (!checkAdminAccess()) return;
             loadUsersList();
             updateStats();
+            loadNewsList();
         });
 
         // Switch tabs
@@ -690,6 +727,104 @@
         function adminLogout() {
             localStorage.removeItem('fnqCurrentUser');
             window.location.href = 'index.html';
+        }
+
+        // ============================================================================
+        // NEWS/ANNOUNCEMENT FUNCTIONS
+        // ============================================================================
+
+        // Load news list
+        function loadNewsList() {
+            const news = JSON.parse(localStorage.getItem('fnqNews') || '[]');
+            const container = document.getElementById('news-list-container');
+
+            if (news.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>Chưa có thông báo nào</p></div>';
+                return;
+            }
+
+            let html = '';
+            news.forEach((item, index) => {
+                const expiryText = item.expiry ? ` | Hết hạn: ${new Date(item.expiry).toLocaleDateString('vi-VN')}` : '';
+                const typeIcon = {
+                    'info': 'ℹ️',
+                    'update': '🔄',
+                    'warning': '⚠️',
+                    'success': '✓'
+                }[item.type] || '📢';
+
+                html += `
+                    <div style="background: rgba(124, 58, 237, 0.1); border: 1px solid rgba(124, 58, 237, 0.2); border-radius: 12px; padding: 20px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                            <div>
+                                <h4 style="margin: 0 0 5px 0; color: #fff; font-size: 1.1rem;">
+                                    <span>${typeIcon}</span> ${item.title}
+                                </h4>
+                                <p style="margin: 0; color: #b7b0d1; font-size: 0.85rem;">
+                                    ${new Date(item.createdAt).toLocaleString('vi-VN')}${expiryText}
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn-small btn-edit" onclick="editNews(${index})">Sửa</button>
+                                <button class="btn-small btn-delete" onclick="deleteNews(${index})">Xóa</button>
+                            </div>
+                        </div>
+                        <p style="margin: 0; color: #e8e4f3; line-height: 1.6;">${item.content}</p>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Create news
+        function adminCreateNews(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('news-title').value;
+            const content = document.getElementById('news-content').value;
+            const type = document.getElementById('news-type').value;
+            const expiry = document.getElementById('news-expiry').value;
+
+            const news = JSON.parse(localStorage.getItem('fnqNews') || '[]');
+
+            news.unshift({
+                title,
+                content,
+                type,
+                expiry: expiry ? new Date(expiry).getTime() : null,
+                createdAt: Date.now()
+            });
+
+            localStorage.setItem('fnqNews', JSON.stringify(news));
+            showMessage('Gửi thông báo thành công', 'success');
+            resetNewsForm();
+            loadNewsList();
+        }
+
+        // Edit news (show alert for now)
+        function editNews(index) {
+            alert('Chỉnh sửa thông báo #' + (index + 1) + ' (tính năng sắp tới)');
+        }
+
+        // Delete news
+        function deleteNews(index) {
+            if (!confirm('Bạn chắc chắn muốn xóa thông báo này?')) return;
+
+            const news = JSON.parse(localStorage.getItem('fnqNews') || '[]');
+            news.splice(index, 1);
+
+            localStorage.setItem('fnqNews', JSON.stringify(news));
+            showMessage('Xóa thông báo thành công', 'success');
+            loadNewsList();
+        }
+
+        // Reset news form
+        function resetNewsForm() {
+            document.getElementById('news-title').value = '';
+            document.getElementById('news-content').value = '';
+            document.getElementById('news-type').value = 'info';
+            document.getElementById('news-expiry').value = '';
         }
     </script>
 </body>
